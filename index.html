@@ -350,7 +350,8 @@ button{cursor:pointer}
     <div class="section-head" style="margin:0">
       <div class="eyebrow">The Vamps</div>
       <h2>A Vamp bites into the fabric with her needle</h2>
-      <p class="muted">Vamps are the sewists who make every Dracula suit: retired seamstresses, parents at home while the kids are at school, people whose jobs changed and who still have great hands. Each one is vetted, paid per suit at a fair hourly rate, and matched to orders near where she lives.</p>
+      <p class="muted">Vamps are the sewists who make every Dracula suit: people whose jobs were displaced by AI, retired seamstresses, and parents at home while the kids are at school. Each one is vetted, paid per suit at a fair hourly rate, and matched to orders near where she lives.</p>
+      <p class="muted">Vamps can also record themselves while they sew. Those videos go on Dracula's social media so more people can learn the craft, and Vamps share in what the channels earn. More viewers means more people who can have a custom-made suit they love.</p>
       <div><button class="btn small" data-go="vamps">See the Vamp network</button></div>
     </div>
     <div class="section-head" style="margin:0">
@@ -366,7 +367,7 @@ button{cursor:pointer}
   </div>
 
   <div class="footer">
-    <span>Dracula Swimwear · Founded by Alex Draculich</span>
+    <span>Dracula Swimwear · Founded by Alex Drakulich</span>
     <span>Prototype for discussion. Prices, people and orders shown are examples.</span>
   </div>
 </section>
@@ -496,7 +497,7 @@ button{cursor:pointer}
   <div class="section-head">
     <div class="eyebrow">The Vamp network</div>
     <h2>Local sewists, matched to each order</h2>
-    <p class="muted">Every order goes to the nearest Vamp who has the right skills and room in her week. She gets the blueprint, the printed fabric and the hardware kit, and she's paid when the suit passes quality check.</p>
+    <p class="muted">Every order goes to the nearest Vamp who has the right skills and room in her week. She gets the blueprint, the printed fabric and the hardware kit, and she's paid when the suit passes quality check. Many Vamps are people whose jobs were displaced by AI, and this is skilled, paid work they can do from home.</p>
   </div>
   <div class="two" style="gap:28px">
     <div class="gridgap">
@@ -512,6 +513,7 @@ button{cursor:pointer}
           <dt>Typical one-piece</dt><dd>3.25–4.5 hrs → $98–135</dd>
           <dt>Paid</dt><dd>When the suit passes QA</dd>
           <dt>How</dt><dd>Direct deposit (Stripe Connect), 1099 at year end</dd>
+          <dt>Social media</dt><dd>Record while you sew; share in the channel earnings</dd>
         </dl>
       </div>
       <div class="card" style="display:grid;gap:10px">
@@ -522,6 +524,7 @@ button{cursor:pointer}
           <li>Pass QA and a short video call with Alex.</li>
           <li>Get your starter kit: pattern paper, needles, labels, packaging.</li>
           <li>Pick up jobs near you. Take as many or as few as you like.</li>
+          <li>Optional: film your sewing for Dracula's channels and earn a share of the social media income.</li>
         </ol>
       </div>
     </div>
@@ -678,7 +681,7 @@ const VAMPS = [
   {id:'denise', name:'Denise K.', init:'DK', color:'#23706B', about:'Stay-at-home mom of three, sews while the kids are at school', dist:5.8, rating:4.8, suits:18, load:1, cap:2, skills:['Bikinis','Print matching'], x:.28, y:.62},
   {id:'priya', name:'Priya S.', init:'PS', color:'#6B3FA0', about:'Former garment QA lead, lost her job when the plant automated', dist:2.1, rating:5.0, suits:27, load:2, cap:3, skills:['Underwire','Lingerie construction','Flex wire'], x:.56, y:.62},
   {id:'marta', name:'Marta L.', init:'ML', color:'#B06A1A', about:'Retired schoolteacher, lifelong quilter', dist:7.4, rating:4.7, suits:9, load:0, cap:2, skills:['Bikinis','Bandeaus'], x:.18, y:.26},
-  {id:'june', name:'June A.', init:'JA', color:'#2856B8', about:'Fashion designer between contracts', dist:4.0, rating:4.9, suits:12, load:0, cap:3, skills:['One-pieces','High-waist','Prints'], x:.8, y:.7}
+  {id:'june', name:'June A.', init:'JA', color:'#2856B8', about:'Pattern designer whose job was replaced by AI design tools', dist:4.0, rating:4.9, suits:12, load:0, cap:3, skills:['One-pieces','High-waist','Prints'], x:.8, y:.7}
 ];
 
 /* ---------- geometry & avatar ---------- */
@@ -864,7 +867,8 @@ function priceOf(d=S.d,m=S.m,adj=S.log.length){
     ['Vamp labor', `${hrs} hrs × $30`, hrs*30],
     ['Pattern & quality check', '', 7],
     ['Packaging', '', 3.5],
-    ['Shipping', '', 8]
+    ['Materials shipping', 'fabric & kit to your Vamp', 8],
+    ['Shipping to you', 'finished suit, tracked', 9]
   ];
   const cost=lines.reduce((a,l)=>a+l[2],0), margin=cost*.25, sub=cost+margin;
   const total=(sub+.30)/(1-.029), fee=total-sub;
@@ -1350,8 +1354,9 @@ function renderOffice(){
     [o.date,`Sales receipt ${o.id} (Stripe)`,money(o.price.total)],
     [o.date,'Stripe processing fee',`−${money(o.price.fee)}`],
     [o.date,`Bill: ${o.vamp.name}, contract labor`,`−${money(o.price.labor)}`],
-    [o.date,'Expense: fabric, lining, hardware',`−${money(o.price.cost-o.price.labor-8)}`],
-    [o.date,'Expense: shipping label',`−${money(8)}`]
+    [o.date,'Expense: fabric, lining, hardware',`−${money(o.price.cost-o.price.labor-17)}`],
+    [o.date,'Expense: materials shipping to Vamp',`−${money(8)}`],
+    [o.date,'Expense: shipping label to client',`−${money(9)}`]
   ]).map(r=>`<div><span class="muted">${r[0]}</span><span>${esc(r[1])}</span><span class="amt">${r[2]}</span></div>`).join('');
   const I=[['Stripe','Card, Apple Pay and Google Pay checkout. Deposits to the business bank account.','Needs: business bank account, EIN'],
     ['Stripe Connect','Pays each Vamp by direct deposit and files her 1099.','Needs: Vamp onboarding'],
