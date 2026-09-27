@@ -96,6 +96,20 @@ button{cursor:pointer}
 .promise{display:grid;gap:14px;padding:0;margin:0;list-style:none}
 .promise li{display:grid;grid-template-columns:28px 1fr;gap:10px}
 .promise li::before{content:"";width:18px;height:18px;border-radius:50%;margin-top:3px;background:var(--sea-soft);box-shadow:inset 0 0 0 5px var(--sea)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.gcard .ph{position:relative;background:var(--sea-soft);aspect-ratio:4/5;max-width:100%}
+.gcard .ph svg{width:100%;height:100%;display:block}
+.gcard .ph .tag{position:absolute;left:10px;top:10px;background:var(--surface)}
+.gcard .body{padding:14px;display:grid;gap:8px;align-content:start}
+.gcard .stars{color:var(--accent);letter-spacing:2px;font-size:13px}
+.gcard q{font-family:var(--display);font-style:italic;font-size:17px;line-height:1.3}
+.gcard .meta{font-family:var(--mono);font-size:11px;color:var(--sea)}
+.gnote{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--surface-2);border-radius:14px;padding:14px 16px;font-size:13.5px;margin-bottom:16px}
+.gsteps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+.gsteps div{display:grid;gap:4px;font-size:13.5px}
+.gsteps b{font-size:14px}
+@media (max-width:720px){.gsteps{grid-template-columns:1fr 1fr}}
 .footer{padding-block:32px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--ink-2);font-size:13px}
 
 /* app layout */
@@ -295,6 +309,7 @@ button{cursor:pointer}
       <div class="ctas">
         <button class="btn" data-go="app">Open the fitting room</button>
         <button class="btn ghost" data-go="vamps">Become a Vamp</button>
+        <a class="btn ghost" href="#gallery" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'});return false;">See the gallery</a>
       </div>
     </div>
     <div class="hero-art">
@@ -363,6 +378,22 @@ button{cursor:pointer}
         <li><span>Vamps see measurements and a pattern, never your name, face or photos.</span></li>
         <li><span>Delete your fit profile any time, in one tap.</span></li>
       </ul>
+    </div>
+  </div>
+
+  <div class="section" id="gallery">
+    <div class="section-head">
+      <div class="eyebrow">Worn by our clients</div>
+      <h2>The gallery</h2>
+      <p class="muted">Real women in their Dracula suits, in their own words, with the one little thing they changed.</p>
+    </div>
+    <div class="gnote"><span><b>Sample gallery.</b> These cards show the layout. Real client photos and reviews replace them as clients share them, and only after Alex approves each one.</span><span class="tag warn">Samples, not real reviews</span></div>
+    <div class="gallery" id="galleryGrid"></div>
+    <div class="gsteps">
+      <div><b>Suit arrives</b><span class="muted">A week later the app asks how it fits.</span></div>
+      <div><b>She shares a photo</b><span class="muted">From her camera roll, with a short review. Her face is optional.</span></div>
+      <div><b>She gives permission</b><span class="muted">She chooses first name, initials, or anonymous, and can remove it any time.</span></div>
+      <div><b>Alex approves</b><span class="muted">Approved photos appear here and can be reposted to Dracula's social media.</span></div>
     </div>
   </div>
 
@@ -1377,6 +1408,18 @@ function renderHero(){
     `<div class="row" style="border-top:1px dashed var(--line);margin-top:6px;padding-top:8px"><span>Cost to make</span><span>${money(p.cost)}</span></div><div class="row"><span>Studio margin 25%</span><span>${money(p.margin)}</span></div><div class="row"><span>Card processing</span><span>${money(p.fee)}</span></div><div class="row tot"><span>Total</span><span>${money(p.total)}</span></div>`;
 }
 
+/* ---------- gallery (sample cards until real client photos exist) ---------- */
+const GALLERY=[
+  {d:{...HERO_D}, skin:'#A56B47', hair:'#1E1310', m:{height:65,bust:40,underbust:34,waist:33,hips:43,torso:63}, q:'Sample review: the strap finally sits where I want it.', meta:'Balconette + high-waist · strap 1.5 cm lower'},
+  {d:{...HERO_D,piece:'onepiece',top:'scoop',pattern:'solid',c1:'#127C7A',support:'none',legCut:.4,fabric:'rib'}, skin:'#F3D5C0', hair:'#C9A15A', m:{height:67,bust:35,underbust:30,waist:28,hips:37,torso:64}, q:'Sample review: long torso, and it doesn\'t ride up.', meta:'Scoop one-piece · torso +3 cm'},
+  {d:{...HERO_D,top:'triangle',bottom:'cheeky',pattern:'leopard',c1:'#C8A27A',c2:'#4A2C1A',support:'none',rise:7,legCut:.6}, skin:'#7B4A2E', hair:'#1E1310', m:{height:64,bust:37,underbust:31,waist:30,hips:42,torso:61}, q:'Sample review: more room up front, same tiny triangle look.', meta:'Triangle + cheeky · cup +2 cm'},
+  {d:{...HERO_D,top:'bandeau',bottom:'boyshort',pattern:'stripe',c1:'#F2EADB',c2:'#1B2A4A',support:'soft',legLength:10}, skin:'#E8B996', hair:'#4A2A18', m:{height:62,bust:34,underbust:29,waist:29,hips:40,torso:60}, q:'Sample review: the longer bottom is exactly what I asked for.', meta:'Bandeau + boyshort · bottom +4 cm'}
+];
+function renderGallery(){
+  $('#galleryGrid').innerHTML=GALLERY.map(g=>`<figure class="gcard" style="margin:0"><div class="ph">${avatarSVG(g.m,g.d,{skin:g.skin,hair:g.hair,face:null},{vb:'60 20 180 225'})}<span class="tag">Sample</span></div>
+    <figcaption class="body"><span class="stars" aria-label="Sample rating">★★★★★</span><q>${esc(g.q)}</q><span class="meta">${esc(g.meta)}</span></figcaption></figure>`).join('');
+}
+
 /* ---------- navigation ---------- */
 const VIEWS=['website','app','blueprint','vamps','office','plan'];
 function go(v){
@@ -1438,7 +1481,7 @@ S.orders=[
   {id:'DS-1040', date:'Sep 19', d:{...S.d,top:'balconette',bottom:'highwaist',pattern:'leopard',c1:'#C8A27A',c2:'#4A2C1A',support:'flex',rise:1.5}, m:{...S.m,bust:38,hips:41}, log:[{t:'2 cm more room in the cup'},{t:'Support: Underwire → Flex wire'}], vamp:{...VAMPS[2],why:''}, status:'Sewing'},
   {id:'DS-1039', date:'Sep 12', d:{...S.d,piece:'onepiece',top:'scoop',pattern:'solid',c1:'#1B2A4A',fabric:'rib',legCut:.4}, m:{...S.m,bust:34,hips:37}, log:[{t:'Bottom longer (4 cm)'}], vamp:{...VAMPS[0],why:''}, status:'Delivered'}
 ].map(o=>({...o, price:priceOf(o.d,o.m,o.log.length)}));
-renderChips(); renderMsgs(); renderMGrid(); renderSwatches(); renderDesign(); renderStudio(); renderAIBadge(); renderVamps(); renderOffice();
+renderGallery(); renderChips(); renderMsgs(); renderMGrid(); renderSwatches(); renderDesign(); renderStudio(); renderAIBadge(); renderVamps(); renderOffice();
 go((location.hash||'').slice(1)||'website');
 
 (async()=>{
